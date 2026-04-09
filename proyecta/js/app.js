@@ -23,6 +23,7 @@ const els = {
   v0Display: document.getElementById("v0-display"),
   kpiRoi: document.getElementById("kpi-roi"),
   kpiBreakEven: document.getElementById("kpi-breakeven"),
+  kpiBreakEvenSub: document.getElementById("kpi-breakeven-sub"),
   kpiFinal: document.getElementById("kpi-final"),
   alertBox: document.getElementById("alert-box"),
   tableBody: document.getElementById("table-body"),
@@ -134,11 +135,28 @@ function renderTable(rows) {
   });
 }
 
-function renderKpis(v0, finalReal, roi, beYear) {
+function renderKpis(v0, finalReal, roi, beYear, horizonYears) {
   els.kpiFinal.textContent = fmtMoney(finalReal);
   els.kpiRoi.textContent = `${roi.toFixed(1)}%`;
-  els.kpiBreakEven.textContent =
-    beYear === null ? "N/A en el horizonte" : `Año ${beYear}`;
+  const sub = els.kpiBreakEvenSub;
+  if (beYear !== null) {
+    els.kpiBreakEven.textContent = `Año ${beYear}`;
+    if (sub) {
+      sub.textContent =
+        "En ese año, lo que llevas ganando en total ya es mayor que lo que pusiste al inicio (V₀).";
+    }
+  } else if (v0 <= 0) {
+    els.kpiBreakEven.textContent = "Introduce V₀";
+    if (sub) {
+      sub.textContent =
+        "Hace falta un capital inicial mayor que cero para calcular este indicador.";
+    }
+  } else {
+    els.kpiBreakEven.textContent = "Más allá del periodo";
+    if (sub) {
+      sub.textContent = `Con la tasa y los ${horizonYears} años que estás simulando, ese momento aún no llega: habría que alargar el plazo o subir el supuesto de crecimiento.`;
+    }
+  }
 }
 
 function drawChart(labels, series, linearLine) {
@@ -273,7 +291,7 @@ function run() {
   const roi = roiTotalPercent(v0, finalReal);
   const beYear = breakEvenYear(rowsReal, v0);
 
-  renderKpis(v0, finalReal, roi, beYear);
+  renderKpis(v0, finalReal, roi, beYear, years);
   renderAlert(rate);
   renderTable(rowsReal);
 
