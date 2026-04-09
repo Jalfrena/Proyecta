@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Proyecta: Analysis & Growth — simulador de interés compuesto con escenarios optimista, realista y pesimista."
+    />
+    <title>Proyecta: Analysis &amp; Growth</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <p class="eyebrow">Simulación financiera · Interés compuesto</p>
+        <h1>Proyecta: Analysis &amp; Growth</h1>
+        <p>
+          Compara tres tasas alrededor de tu supuesto base y observa el contraste
+          exponencial frente a un crecimiento lineal de referencia.
+        </p>
+        <div class="formula-badge" aria-hidden="true">V(t) = V₀ · (1 + r)ᵗ</div>
+      </header>
+
+      <div class="main-grid">
+        <div>
+          <section class="panel" aria-labelledby="config-title">
+            <h2 class="panel-title" id="config-title">Parámetros</h2>
+
+            <div class="scenario-legend" aria-hidden="true">
+              <span><span class="dot dot-opt" aria-hidden="true"></span> Optimista: r + 5%</span>
+              <span><span class="dot dot-real" aria-hidden="true"></span> Realista: tu tasa r</span>
+              <span><span class="dot dot-pes" aria-hidden="true"></span> Pesimista: r − 5% (mín. 0%)</span>
+            </div>
+
+            <div class="field">
+              <label for="v0">
+                Capital inicial (V₀)
+                <span class="value-readout" id="v0-display" aria-live="polite">$1,000.00</span>
+              </label>
+              <div class="prefix">
+                <span class="prefix-symbol" aria-hidden="true">$</span>
+                <input
+                  type="number"
+                  class="number-input"
+                  id="v0"
+                  value="1000"
+                  min="0.01"
+                  step="0.01"
+                  inputmode="decimal"
+                  aria-describedby="v0-help"
+                />
+              </div>
+              <span class="sr-only" id="v0-help">Monto inicial en moneda local.</span>
+            </div>
+
+            <div class="field">
+              <label for="rate">
+                Tasa anual (r)
+                <span class="value-readout" id="rate-display" aria-live="polite">10%</span>
+              </label>
+              <input
+                type="range"
+                id="rate"
+                min="0"
+                max="100"
+                value="10"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="10"
+              />
+            </div>
+
+            <div class="field">
+              <label for="years">
+                Tiempo (años, t)
+                <span class="value-readout" id="years-display" aria-live="polite">10 años</span>
+              </label>
+              <input
+                type="range"
+                id="years"
+                min="1"
+                max="40"
+                value="10"
+                aria-valuemin="1"
+                aria-valuemax="40"
+                aria-valuenow="10"
+              />
+            </div>
+
+            <div class="toggle-row">
+              <div>
+                <label for="stress">Modo de estrés</label>
+                <div class="hint">A mitad del periodo, la tasa cae 2 puntos porcentuales en todos los escenarios.</div>
+              </div>
+              <label class="switch" title="Activar caída de tasa a mitad de horizonte">
+                <input type="checkbox" id="stress" />
+                <span class="slider" aria-hidden="true"></span>
+                <span class="sr-only">Activar modo de estrés</span>
+              </label>
+            </div>
+
+            <p class="panel-title" style="margin-top: 8px">Presets</p>
+            <div class="preset-grid">
+              <button type="button" class="preset-btn" onclick="loadPreset(1000,10,10)">
+                <span class="s-name">Base</span>
+                $1 000 · 10% · 10 años
+              </button>
+              <button type="button" class="preset-btn" onclick="loadPreset(5000,8,15)">
+                <span class="s-name">Conservador</span>
+                $5 000 · 8% · 15 años
+              </button>
+              <button type="button" class="preset-btn" onclick="loadPreset(2000,18,12)">
+                <span class="s-name">Ambicioso</span>
+                $2 000 · 18% · 12 años
+              </button>
+              <button type="button" class="preset-btn" onclick="loadPreset(500,55,5)">
+                <span class="s-name">Supuesto extremo</span>
+                $500 · 55% · 5 años
+              </button>
+            </div>
+
+            <p class="quote">
+              Las matemáticas muestran <em>qué puede ocurrir</em> bajo tus supuestos;
+              la decisión sigue siendo tuya.
+            </p>
+          </section>
+        </div>
+
+        <div class="results-col">
+          <div class="kpi-row" role="region" aria-label="Indicadores escenario realista">
+            <div class="kpi primary">
+              <div class="kpi-label">Valor final (realista)</div>
+              <div class="kpi-value" id="kpi-final">—</div>
+              <div class="kpi-sub">V(t) con tu tasa r</div>
+            </div>
+            <div class="kpi secondary">
+              <div class="kpi-label">ROI total</div>
+              <div class="kpi-value" id="kpi-roi">—</div>
+              <div class="kpi-sub">((Vₜ − V₀) / V₀) × 100</div>
+            </div>
+            <div class="kpi tertiary">
+              <div class="kpi-label">Break-even</div>
+              <div class="kpi-value" id="kpi-breakeven" style="font-size: 1.15rem">—</div>
+              <div class="kpi-sub">Año en que intereses acum. &gt; V₀</div>
+            </div>
+          </div>
+
+          <section class="chart-panel" aria-labelledby="chart-title">
+            <div class="chart-header">
+              <h2 class="chart-title" id="chart-title">Curvas de proyección</h2>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="mainChart" aria-label="Gráfico de líneas: capital en el tiempo"></canvas>
+            </div>
+          </section>
+
+          <div class="alert" id="alert-box" role="status" aria-live="polite"></div>
+
+          <section class="panel" style="padding: 0; overflow: hidden" aria-labelledby="table-title">
+            <h2 class="sr-only" id="table-title">Tabla analítica año a año (escenario realista)</h2>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Año</th>
+                    <th scope="col">Capital inicial</th>
+                    <th scope="col">Interés ganado</th>
+                    <th scope="col">Capital acumulado</th>
+                  </tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <script src="vendor/chart.umd.js"></script>
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>

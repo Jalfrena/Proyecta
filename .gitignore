@@ -1,0 +1,5 @@
+node_modules/
+
+# Referencia local; no subir al repositorio
+rules.md
+example.html
