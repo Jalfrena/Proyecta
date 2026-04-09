@@ -12,12 +12,15 @@ let chart = null;
 
 const els = {
   v0: /** @type {HTMLInputElement} */ (document.getElementById("v0")),
-  rate: /** @type {HTMLInputElement} */ (document.getElementById("rate")),
-  years: /** @type {HTMLInputElement} */ (document.getElementById("years")),
+  rateInput: /** @type {HTMLInputElement} */ (document.getElementById("rate-input")),
+  yearsInput: /** @type {HTMLInputElement} */ (document.getElementById("years-input")),
+  rateSlider: /** @type {HTMLInputElement} */ (document.getElementById("rate-slider")),
+  yearsSlider: /** @type {HTMLInputElement} */ (document.getElementById("years-slider")),
+  rateSliderWrap: document.getElementById("rate-slider-wrap"),
+  yearsSliderWrap: document.getElementById("years-slider-wrap"),
+  useSliders: /** @type {HTMLInputElement} */ (document.getElementById("use-sliders")),
   stress: /** @type {HTMLInputElement} */ (document.getElementById("stress")),
   v0Display: document.getElementById("v0-display"),
-  rateDisplay: document.getElementById("rate-display"),
-  yearsDisplay: document.getElementById("years-display"),
   kpiRoi: document.getElementById("kpi-roi"),
   kpiBreakEven: document.getElementById("kpi-breakeven"),
   kpiFinal: document.getElementById("kpi-final"),
@@ -25,6 +28,27 @@ const els = {
   tableBody: document.getElementById("table-body"),
   canvas: /** @type {HTMLCanvasElement} */ (document.getElementById("mainChart")),
 };
+
+/**
+ * @param {number} n
+ * @param {number} lo
+ * @param {number} hi
+ */
+function clamp(n, lo, hi) {
+  return Math.min(hi, Math.max(lo, n));
+}
+
+function readRate() {
+  const raw = parseFloat(els.rateInput.value);
+  if (Number.isNaN(raw)) return 0;
+  return clamp(raw, 0, 100);
+}
+
+function readYearsInt() {
+  const raw = parseFloat(els.yearsInput.value);
+  if (Number.isNaN(raw)) return 1;
+  return clamp(Math.round(raw), 1, 50);
+}
 
 /**
  * @param {number} n
@@ -39,19 +63,40 @@ function fmtMoney(n) {
 
 function readInputs() {
   const v0 = Math.max(0, parseFloat(els.v0.value) || 0);
-  const rate = parseFloat(els.rate.value) || 0;
-  const years = Math.max(0, Math.min(50, parseInt(els.years.value, 10) || 0));
+  const rate = readRate();
+  const years = readYearsInt();
   const stressActive = els.stress.checked;
   return { v0, rate, years, stressActive };
 }
 
 function updateReadouts() {
-  const { v0, rate, years } = readInputs();
+  const { v0 } = readInputs();
   els.v0Display.textContent = fmtMoney(v0);
-  els.rateDisplay.textContent = `${rate}%`;
-  els.yearsDisplay.textContent = `${years} años`;
-  els.rate.setAttribute("aria-valuenow", String(rate));
-  els.years.setAttribute("aria-valuenow", String(years));
+}
+
+function syncSlidersFromInputs() {
+  const rate = readRate();
+  const years = readYearsInt();
+  els.rateSlider.value = String(rate);
+  els.yearsSlider.value = String(years);
+  els.rateSlider.setAttribute("aria-valuenow", String(rate));
+  els.yearsSlider.setAttribute("aria-valuenow", String(years));
+}
+
+function slidersVisible() {
+  return els.useSliders.checked;
+}
+
+function setSliderVisibility(show) {
+  els.rateSliderWrap.hidden = !show;
+  els.yearsSliderWrap.hidden = !show;
+}
+
+function onUseSlidersChange() {
+  const show = slidersVisible();
+  setSliderVisibility(show);
+  if (show) syncSlidersFromInputs();
+  run();
 }
 
 function renderAlert(rate) {
@@ -245,7 +290,29 @@ function run() {
 }
 
 function wireEvents() {
-  [els.v0, els.rate, els.years, els.stress].forEach((el) => {
+  els.useSliders.addEventListener("change", onUseSlidersChange);
+
+  els.rateSlider.addEventListener("input", () => {
+    els.rateInput.value = els.rateSlider.value;
+    run();
+  });
+
+  els.yearsSlider.addEventListener("input", () => {
+    els.yearsInput.value = els.yearsSlider.value;
+    run();
+  });
+
+  els.rateInput.addEventListener("input", () => {
+    if (slidersVisible()) syncSlidersFromInputs();
+    run();
+  });
+
+  els.yearsInput.addEventListener("input", () => {
+    if (slidersVisible()) syncSlidersFromInputs();
+    run();
+  });
+
+  [els.v0, els.stress].forEach((el) => {
     el.addEventListener("input", run);
     el.addEventListener("change", run);
   });
@@ -258,10 +325,12 @@ function wireEvents() {
  */
 window.loadPreset = function loadPreset(v0, rate, years) {
   els.v0.value = String(v0);
-  els.rate.value = String(rate);
-  els.years.value = String(years);
+  els.rateInput.value = String(rate);
+  els.yearsInput.value = String(years);
+  if (slidersVisible()) syncSlidersFromInputs();
   run();
 };
 
+setSliderVisibility(false);
 wireEvents();
 run();
