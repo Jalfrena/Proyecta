@@ -13,87 +13,54 @@ Proyecto desarrollado en el marco de **oportunidades de la Fundación Gloria Kri
 
 | Para… | Necesitas |
 |--------|-----------|
-| Ejecutar la app | Navegador reciente + **Node.js** (incluye `npx`) |
-| Solo ver la web en local | **No** hace falta `npm install` en la raíz |
+| Ver la app en local | Navegador reciente + **servidor local** (Node con `npx`, **o** [Visual Studio Code](https://code.visualstudio.com/) + extensión **Live Server**) |
+| Regenerar Chart.js desde la raíz | `npm install` (opcional; ver más abajo) |
+
+**Importante:** no abras `index.html` con doble clic (`file://…`). El gráfico y algunos recursos suelen fallar por la política de seguridad del navegador. Usa siempre una URL `http://localhost:…` o similar.
 
 ## Ejecutar en local
 
-La aplicación es una **página web con varios archivos**. El navegador necesita un **pequeño programa en segundo plano** (servidor local) que “sirva” esos archivos por una dirección tipo `http://localhost:…`. **No basta** con hacer doble clic en `index.html`: en muchos equipos el gráfico no cargará por seguridad del navegador.
+Sigue los pasos en orden. Elige **solo una** opción al final: **A (Node.js)** o **B (VS Code + Live Server)**.
 
-### 1. Tener el código en tu computadora
+1. **Obtén el proyecto** en tu equipo: clona el repo con Git o descarga el ZIP desde GitHub (**Code → Download ZIP**) y descomprime.
+2. **Abre la carpeta correcta:** dentro del proyecto debe existir una carpeta llamada **`proyecta`** (minúsculas). Ahí están `index.html`, `css/`, `js/` y `vendor/`. Todo lo que sigue usa **esa** carpeta como raíz del sitio.
+3. **Elige cómo vas a servir la carpeta `proyecta`:**
 
-- Si usas **Git**: clona el repo donde quieras (por ejemplo `Documentos`).
-- Si **no** usas Git: en GitHub (o donde esté el repo) usa **Code → Download ZIP**, descomprime y recuerda **en qué carpeta** quedó (por ejemplo `Proyecta`).
+### Opción A — Node.js (`npx serve`)
 
-Dentro verás una carpeta llamada **`proyecta`** (minúsculas). Ahí dentro deben existir archivos como `index.html`, carpetas `css`, `js` y `vendor`. **Esa** es la carpeta de la app.
+1. Si no tienes Node.js, instálalo desde [nodejs.org](https://nodejs.org/) (versión **LTS**). Cierra y vuelve a abrir la terminal.
+2. Comprueba la instalación: `node -v` (debe mostrar algo como `v20.x` o `v22.x`).
+3. Abre una terminal **en la carpeta `proyecta`** (donde ves `index.html`).  
+   - *Windows:* clic derecho en la carpeta → **Abrir en Terminal** / **Abrir en PowerShell aquí**.  
+   - *Otro sitio:* `cd` hasta esa ruta, por ejemplo  
+     `cd "C:\Users\TU_USUARIO\Documentos\Proyecta\proyecta"`.
+4. Ejecuta:
 
-### 2. Abrir la terminal en la carpeta correcta
+   ```bash
+   npx --yes serve .
+   ```
 
-- **Windows:** clic derecho en la carpeta `proyecta` → **“Abrir en Terminal”** o **“Abrir ventana de PowerShell aquí”**.  
-  Si abres la terminal en otro sitio, llega a la carpeta con comandos (ajusta la ruta a la tuya):
+5. Copia la URL que muestra la terminal (por ejemplo `http://localhost:3000`) y ábrela en el navegador.
+6. Para detener el servidor: **Ctrl + C** en la terminal.
 
-  ```powershell
-  cd "C:\Users\TU_USUARIO\Documentos\Proyecta\proyecta"
-  ```
+- **Puerto ocupado:** `npx --yes serve -l 5000 .` y abre `http://localhost:5000`.
+- **Firewall (Windows):** si pide permiso para Node en red privada, puedes aceptarlo para `localhost`.
 
-  Comprueba que estás en el sitio adecuado: al listar archivos deberías ver `index.html`:
+### Opción B — Sin Node.js: Visual Studio Code + Live Server
 
-  ```powershell
-  dir
-  ```
+1. Instala [Visual Studio Code](https://code.visualstudio.com/) si aún no lo tienes.
+2. Abre VS Code → **Extensiones** (icono de cuadrados o `Ctrl+Shift+X`) → busca **Live Server** (autor habitual: *Ritwick Dey*) → **Instalar**.
+3. En VS Code: **Archivo → Abrir carpeta…** y selecciona la carpeta **`proyecta`** (la que contiene `index.html`), no la raíz del repo entero a menos que sepas qué estás haciendo.
+4. En el explorador de archivos, **clic derecho en `index.html`** → **Open with Live Server**. (También puedes usar el botón **Go Live** en la barra de estado, si está visible.)
+5. Se abrirá el navegador con una dirección `http://127.0.0.1:…` — ahí debe cargarse el simulador y el gráfico.
+6. Para parar: en la barra de VS Code pulsa **Port: …** / **Stop Live Server** o el botón que indique la extensión.
 
-  En Mac o Linux, el equivalente suele ser `ls`.
+### Si algo falla
 
-### 3. Comprobar que tienes Node.js
-
-En la misma terminal escribe:
-
-```bash
-node -v
-```
-
-Debería mostrarse algo como `v20.x.x` o `v22.x.x` (cualquier versión **LTS** reciente sirve).
-
-Si dice que **no reconoce** el comando o no está instalado:
-
-1. Descarga e instala Node desde [nodejs.org](https://nodejs.org/) (elige la versión **LTS**).
-2. **Cierra y vuelve a abrir** la terminal (o reinicia el equipo si hace falta).
-3. Repite `node -v` hasta que muestre una versión.
-
-### 4. Arrancar el servidor con Node
-
-Estando **dentro** de la carpeta `proyecta` (donde está `index.html`), ejecuta:
-
-```bash
-npx --yes serve .
-```
-
-- La primera vez puede tardar un poco mientras descarga la herramienta `serve`.
-- En la terminal aparecerá una línea con una dirección, por ejemplo **`http://localhost:3000`** o **`http://127.0.0.1:3000`**.
-- **Cópiala y pégala en la barra de direcciones del navegador** (Chrome, Edge, Firefox, etc.) y pulsa Enter.
-- Para **detener** el servidor: en la terminal pulsa **Ctrl + C** y confirma si lo pide.
-
-Si el **puerto por defecto está ocupado**, usa otro puerto (ejemplo con `5000`):
-
-```bash
-npx --yes serve -l 5000 .
-```
-
-Luego abre `http://localhost:5000` en el navegador.
-
-### 5. Si algo no funciona
-
-- **“No se reconoce node”:** Node no está instalado o la terminal no lo ve; reinstala desde [nodejs.org](https://nodejs.org/) (LTS), cierra la terminal, abre una nueva y vuelve al paso 3.
-- **Página en blanco o errores en la consola del navegador (F12):** casi siempre es que **no** estás sirviendo desde la carpeta `proyecta` o abriste el archivo como `file://`. Vuelve al paso 2 y confirma que `index.html` está en la carpeta actual.
-- **Sin estilos o 404 en CSS/JS:** las rutas son **relativas** (`css/...`, `js/...`). Si la URL del simulador queda como `…/proyecta` **sin** barra final, el navegador resuelve `css/…` contra la raíz del sitio y falla. El enlace “← Simulador” usa `./` para ir a `…/proyecta/` (carpeta con barra), no `index.html`, que a veces deja la ruta sin `/` final.
-- **“El puerto está en uso”:** usa otro puerto con `npx --yes serve -l 5000 .` (o cambia `5000` por otro número) y abre la URL que indique la terminal.
-- **Firewall de Windows:** si pregunta si permitir **Node.js** en la red, puedes permitir en **red privada** para trabajar con `localhost`.
-
-## Despliegue en Vercel
-
-1. Conecta el repositorio al proyecto en Vercel.
-2. **Root Directory:** `proyecta`.
-3. **Framework Preset:** Other (sin build obligatorio).
+1. **Página en blanco o errores en consola (F12):** la terminal o Live Server debe estar sirviendo la carpeta **`proyecta`**. No uses `file://` ni abras `index.html` desde una carpeta distinta.
+2. **“node no se reconoce”:** instala Node LTS, cierra la terminal, abre una nueva y repite la opción A.
+3. **Sin estilos al volver del glosario:** la URL del simulador debe terminar en **`…/proyecta/`** (con barra) o en **`…/proyecta/index.html`**, no en `…/proyecta` sin barra; si no, las rutas `css/…` se resuelven mal.
+4. **Puerto en uso (Node):** usa otro con `npx --yes serve -l 5000 .`.
 
 ## Actualizar Chart.js (opcional, desde la raíz del repo)
 
