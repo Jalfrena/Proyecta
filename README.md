@@ -103,3 +103,24 @@ npm install
 Copia el archivo:
 
 `node_modules/chart.js/dist/chart.umd.js` → `proyecta/vendor/chart.umd.js` (sustituyendo el existente).
+
+---
+
+## Sponsor
+
+<div align="center">
+
+<table>
+  <tr>
+    <td align="center" valign="middle">
+      <img src="assets/sponsors/fgk-sponsor.png" alt="Fundación Gloria Kriete" width="220" />
+    </td>
+    <td align="center" valign="middle">
+      <img src="assets/sponsors/unicaes-sponsor.png" alt="Universidad Católica de El Salvador (UNICAES)" width="220" />
+    </td>
+  </tr>
+</table>
+
+</div>
+
+*Con el apoyo de la **Fundación Gloria Kriete** y de la **Universidad Católica de El Salvador (UNICAES)**.*
