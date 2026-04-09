@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Glosario de términos — Proyecta: Analysis & Growth, simulador de interés compuesto."
+    />
+    <title>Glosario — Proyecta: Analysis &amp; Growth</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <nav class="page-nav" aria-label="Secciones">
+        <a href="./" class="page-nav__link">← Simulador</a>
+        <span class="page-nav__current">Glosario</span>
+      </nav>
+
+      <header class="header header--subpage">
+        <p class="eyebrow">Proyecta · Ayuda</p>
+        <h1 id="page-title">Glosario</h1>
+        <p>
+          Términos que verás en el simulador. La notación sigue la fórmula
+          <strong>V(t) = V₀ · (1 + r)ᵗ</strong>.
+        </p>
+      </header>
+
+      <section class="panel glossary-panel glossary-page" aria-labelledby="page-title">
+        <p class="glossary-intro glossary-intro--page">
+          Las entradas se cargan desde el archivo <code>js/glossary-data.js</code> para poder editarlas sin tocar
+          el HTML de esta página.
+        </p>
+        <dl class="glossary-list" id="glossary-dl"></dl>
+      </section>
+    </div>
+
+    <script type="module" src="js/glossary-page.js"></script>
+  </body>
+</html>

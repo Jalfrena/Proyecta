@@ -2,11 +2,11 @@
 
 Proyecto desarrollado en el marco de **oportunidades de la Fundación Gloria Kriete**: aplicación web para visualizar **interés compuesto** y comparar supuestos de crecimiento.
 
-**Qué hace:** a partir de capital inicial (V₀), tasa anual (r) y horizonte en años (t), calcula en paralelo escenarios **optimista (r + 5%)**, **realista (r)** y **pesimista (r − 5%, mín. 0%)**; muestra gráfico (exponencial vs. referencia lineal), KPIs (valor final, ROI, break-even), modo de estrés opcional y una **tabla año a año** (sin fórmula cerrada). **Chart.js** va en `proyecta/vendor/` (sin CDN).
+**Qué hace:** a partir de capital inicial (V₀), tasa anual (r) y horizonte en años (t), calcula en paralelo escenarios **optimista (r + 5%)**, **realista (r)** y **pesimista (r − 5%, mín. 0%)**; muestra gráfico (exponencial vs. referencia lineal), KPIs (valor final, ROI, break-even), modo de estrés opcional y **tabla año a año**. Incluye la vista **`glosario.html`** con términos definidos en `js/glossary-data.js`. **Chart.js** va en `proyecta/vendor/` (sin CDN).
 
 **Estructura del repo:**
 
-- `proyecta/` — sitio estático listo para abrir con un servidor local o Vercel (`index.html`, `css/`, `js/`, `vendor/`).
+- `proyecta/` — sitio estático (`index.html`, `glosario.html`, `css/`, `js/` incl. `glossary-data.js` y `glossary-page.js`, `vendor/`).
 - Raíz — `package.json` solo para **regenerar** el bundle de Chart.js (opcional).
 
 ## Requisitos
@@ -85,6 +85,7 @@ Luego abre `http://localhost:5000` en el navegador.
 
 - **“No se reconoce node”:** Node no está instalado o la terminal no lo ve; reinstala desde [nodejs.org](https://nodejs.org/) (LTS), cierra la terminal, abre una nueva y vuelve al paso 3.
 - **Página en blanco o errores en la consola del navegador (F12):** casi siempre es que **no** estás sirviendo desde la carpeta `proyecta` o abriste el archivo como `file://`. Vuelve al paso 2 y confirma que `index.html` está en la carpeta actual.
+- **Sin estilos o 404 en CSS/JS:** las rutas son **relativas** (`css/...`, `js/...`). Si la URL del simulador queda como `…/proyecta` **sin** barra final, el navegador resuelve `css/…` contra la raíz del sitio y falla. El enlace “← Simulador” usa `./` para ir a `…/proyecta/` (carpeta con barra), no `index.html`, que a veces deja la ruta sin `/` final.
 - **“El puerto está en uso”:** usa otro puerto con `npx --yes serve -l 5000 .` (o cambia `5000` por otro número) y abre la URL que indique la terminal.
 - **Firewall de Windows:** si pregunta si permitir **Node.js** en la red, puedes permitir en **red privada** para trabajar con `localhost`.
 
